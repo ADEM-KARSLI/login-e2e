@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Form, FormGroup, Label, Input, Button, FormFeedback } from "reactstrap";
+import { Form, FormGroup, Label, Input, Button } from "reactstrap";
 import {
   validateEmail,
   validatePassword,
@@ -18,7 +18,7 @@ export default function Login() {
   const [errors, setErrors] = useState({
     email: "",
     password: "",
-    terms: "",
+    terms: "Şartları kabul etmelisiniz",
   });
 
   const handleChange = (e) => {
@@ -76,7 +76,7 @@ export default function Login() {
           onChange={handleChange}
           invalid={!!errors.email}
         />
-        {errors.email && <FormFeedback>{errors.email}</FormFeedback>}
+        {errors.email && <div className="text-danger">{errors.email}</div>}
       </FormGroup>
 
       <FormGroup>
@@ -90,7 +90,7 @@ export default function Login() {
           onChange={handleChange}
           invalid={!!errors.password}
         />
-        {errors.password && <FormFeedback>{errors.password}</FormFeedback>}
+        {errors.password && <div className="text-danger">{errors.password}</div>}
       </FormGroup>
 
       <FormGroup check>

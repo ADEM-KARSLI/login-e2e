@@ -14,7 +14,7 @@ describe("Login Form E2E Testleri", () => {
   });
 
   it("Hatalı email ve password: button disabled ve hata mesajı gösteriliyor", () => {
-    cy.get('input[name="email"]').type("wrong@example.com");
+    cy.get('input[name="email"]').type("invalidemail");
     cy.get('input[name="password"]').type("123");
     cy.get('input[name="terms"]').check();
 
