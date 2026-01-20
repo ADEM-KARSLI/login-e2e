@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, FormGroup, Label, Input, Button, FormFeedback } from "reactstrap";
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const passwordRegex = /^.{4,}$/; // en az 4 karakter
+import {
+  validateEmail,
+  validatePassword,
+  validationMessages,
+} from "../utils/validation";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -32,15 +34,13 @@ export default function Login() {
     const newErrors = { ...errors };
 
     if (name === "email") {
-      newErrors.email = emailRegex.test(val) ? "" : "Lütfen geçerli bir email girin";
+      newErrors.email = validateEmail(val) ? "" : validationMessages.invalidEmail;
     }
     if (name === "password") {
-      newErrors.password = passwordRegex.test(val)
-        ? ""
-        : "Şifre en az 4 karakter olmalı";
+      newErrors.password = validatePassword(val) ? "" : validationMessages.weakPassword;
     }
     if (name === "terms") {
-      newErrors.terms = val ? "" : "Şartları kabul etmelisiniz";
+      newErrors.terms = val ? "" : validationMessages.termsNotAccepted;
     }
 
     setErrors(newErrors);
