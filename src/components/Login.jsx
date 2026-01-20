@@ -1,105 +1,120 @@
-import React, { useState, useEffect } from 'react';
-import { Form, FormGroup, Label, Input, Button, FormFeedback } from 'reactstrap';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Form, FormGroup, Label, Input, Button, FormFeedback } from "reactstrap";
 
-const initialForm = {
-  email: '',
-  password: '',
-  terms: false,
-};
-
-const initialErrors = {
-  email: '',
-  password: '',
-};
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const passwordRegex = /^.{4,}$/; // en az 4 karakter
 
 export default function Login() {
-  const [form, setForm] = useState(initialForm);
-  const [errors, setErrors] = useState(initialErrors);
-  const [isValid, setIsValid] = useState(false);
-
   const navigate = useNavigate();
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    terms: false,
+  });
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+    terms: "",
+  });
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    const val = type === "checkbox" ? checked : value;
 
-    setForm({
-      ...form,
-      [name]: type === 'checkbox' ? checked : value,
-    });
-  };
+    setForm((prev) => ({
+      ...prev,
+      [name]: val,
+    }));
 
-  useEffect(() => {
-    const newErrors = {};
+    // Hata mesajlarını güncelle
+    const newErrors = { ...errors };
 
-    if (!emailRegex.test(form.email)) {
-      newErrors.email = 'Geçerli bir email giriniz';
+    if (name === "email") {
+      newErrors.email = emailRegex.test(val) ? "" : "Lütfen geçerli bir email girin";
     }
-
-    if (!passwordRegex.test(form.password)) {
-      newErrors.password = 'Şifre en az 6 karakter, harf ve rakam içermeli';
+    if (name === "password") {
+      newErrors.password = passwordRegex.test(val)
+        ? ""
+        : "Şifre en az 4 karakter olmalı";
+    }
+    if (name === "terms") {
+      newErrors.terms = val ? "" : "Şartları kabul etmelisiniz";
     }
 
     setErrors(newErrors);
-
-    setIsValid(
-      emailRegex.test(form.email) &&
-      passwordRegex.test(form.password) &&
-      form.terms
-    );
-  }, [form]);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!isValid) return;
 
-    navigate('/success');
+    // Tüm validasyonları kontrol et
+    if (!errors.email && !errors.password && !errors.terms) {
+      navigate("/success");
+    }
   };
+
+  const isDisabled =
+    !form.email ||
+    !form.password ||
+    !form.terms ||
+    !!errors.email ||
+    !!errors.password ||
+    !!errors.terms;
 
   return (
     <Form onSubmit={handleSubmit}>
       <FormGroup>
-        <Label>Email</Label>
+        <Label for="email">Email</Label>
         <Input
           type="email"
           name="email"
+          id="email"
+          placeholder="Email"
           value={form.email}
           onChange={handleChange}
           invalid={!!errors.email}
         />
-        <FormFeedback>{errors.email}</FormFeedback>
+        {errors.email && <FormFeedback>{errors.email}</FormFeedback>}
       </FormGroup>
 
       <FormGroup>
-        <Label>Password</Label>
+        <Label for="password">Password</Label>
         <Input
           type="password"
           name="password"
+          id="password"
+          placeholder="Password"
           value={form.password}
           onChange={handleChange}
           invalid={!!errors.password}
         />
-        <FormFeedback>{errors.password}</FormFeedback>
+        {errors.password && <FormFeedback>{errors.password}</FormFeedback>}
       </FormGroup>
 
       <FormGroup check>
         <Input
           type="checkbox"
           name="terms"
+          id="terms"
           checked={form.terms}
           onChange={handleChange}
         />
-        <Label check>Şartları kabul ediyorum</Label>
+        <Label check htmlFor="terms">
+          Şartları kabul ediyorum
+        </Label>
+        {errors.terms && <div className="text-danger">{errors.terms}</div>}
       </FormGroup>
 
-      <FormGroup className="mt-4">
-        <Button color="primary" disabled={!isValid}>
-          Login
-        </Button>
-      </FormGroup>
+      <Button
+        type="submit"
+        color="primary"
+        className="mt-3"
+        disabled={isDisabled}
+      >
+        Login
+      </Button>
     </Form>
   );
 }

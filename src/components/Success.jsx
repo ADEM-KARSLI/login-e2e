@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function Success() {
-  return <h1>Login Successful 🎉</h1>;
+  return <h1>Form başarıyla gönderildi!</h1>;
 }

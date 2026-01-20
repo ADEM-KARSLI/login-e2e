@@ -1,8 +1,9 @@
-import { Routes, Route } from 'react-router-dom';
-import Login from './components/Login';
-import Success from './components/Success';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Login from "./components/Login.jsx";
+import Success from "./components/Success.jsx";
 
-function App() {
+export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
@@ -10,5 +11,3 @@ function App() {
     </Routes>
   );
 }
-
-export default App;
